@@ -29,13 +29,15 @@ export function useCryptoPrices() {
     }
   }
 
+  const numberFormatter = new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+
   function formatPrice(price: number): string {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(price)
+    return numberFormatter.format(price)
   }
 
   function formatCrypto(amount: number, decimals: number = 8): string {
