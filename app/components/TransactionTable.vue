@@ -7,14 +7,16 @@ const props = defineProps<{
 
 const { formatPrice } = useCryptoPrices()
 
+const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit'
+})
+
 function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date)
+  return dateFormatter.format(date)
 }
 
 function getTypeLabel(tx: Transaction): string {
