@@ -1,0 +1,20 @@
+{
+  "name": "cryptrack",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/ui": "^4.3.0",
+    "nuxt": "^4.2.2"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^2.0.0",
+    "typescript": "^5.7.3"
+  }
+}
