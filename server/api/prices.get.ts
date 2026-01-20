@@ -25,14 +25,16 @@ export default defineEventHandler(async () => {
       vs_currencies: 'eur'
     }
 
-    // Add API key as query parameter if available
+    const headers: Record<string, string> = {}
+
+    // Add API key as header if available (more secure than query param)
     if (apiKey) {
-      params.x_cg_demo_api_key = apiKey
+      headers['x-cg-demo-api-key'] = apiKey
     }
 
     const response = await $fetch<CoinGeckoResponse>(
       'https://api.coingecko.com/api/v3/simple/price',
-      { params }
+      { params, headers }
     )
 
     cachedPrices = {
@@ -44,7 +46,8 @@ export default defineEventHandler(async () => {
 
     return cachedPrices
   } catch (error) {
-    console.error('Error fetching prices from CoinGecko:', error)
+    // Log error without exposing full request details (which might include API key)
+    console.error('Error fetching prices from CoinGecko:', (error as Error).message)
 
     // Return cached prices if available, even if stale
     if (cachedPrices) {
