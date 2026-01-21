@@ -25,14 +25,19 @@ export default defineEventHandler(async () => {
       vs_currencies: 'eur'
     }
 
-    // Add API key as query parameter if available
+    const headers: Record<string, string> = {}
+
+    // Add API key as header if available to prevent leakage in logs
     if (apiKey) {
-      params.x_cg_demo_api_key = apiKey
+      headers['x-cg-demo-api-key'] = apiKey
     }
 
     const response = await $fetch<CoinGeckoResponse>(
       'https://api.coingecko.com/api/v3/simple/price',
-      { params }
+      {
+        params,
+        headers
+      }
     )
 
     cachedPrices = {
