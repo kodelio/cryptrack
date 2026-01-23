@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readFile } from 'fs/promises'
 import { join } from 'path'
 
 interface RawTransaction {
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const filePath = join(process.cwd(), 'data', `${year}.csv`)
-    const content = readFileSync(filePath, 'utf-8')
+    const content = await readFile(filePath, 'utf-8')
     const transactions = parseCSV(content)
 
     return transactions
