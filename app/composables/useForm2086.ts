@@ -30,14 +30,6 @@ export function useForm2086() {
   const { calculateCumulativeSummary } = useTaxCalculator()
 
   function generateForm2086Data(transactions: Transaction[], year: number): Form2086Data {
-    // Calculer le résumé cumulatif pour avoir les PAMP corrects
-    const cumulativeSummary = calculateCumulativeSummary(transactions, year)
-
-    // Filtrer les transactions de vente de l'année
-    const sellTransactions = transactions.filter(
-      t => t.date.getFullYear() === year && t.type === 'Trade' && t.tradeType === 'Sell'
-    )
-
     const cessions: Form2086Cession[] = []
     let totalPlusValues = 0
     let totalMoinsValues = 0
@@ -168,8 +160,8 @@ export function useForm2086() {
       ].join(','))
     })
 
-    lines.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''])
-    lines.push(['', '', '', '', '', '', '', '', '', '', '', '', 'TOTAL', data.ligne3VK.toFixed(2), data.ligne3VL.toFixed(2)])
+    lines.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''].join(','))
+    lines.push(['', '', '', '', '', '', '', '', '', '', '', '', 'TOTAL', data.ligne3VK.toFixed(2), data.ligne3VL.toFixed(2)].join(','))
 
     const csv = lines.join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
