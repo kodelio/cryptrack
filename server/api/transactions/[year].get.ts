@@ -17,15 +17,49 @@ interface RawTransaction {
   external_id: string
 }
 
+function parseCSVLine(line: string): string[] {
+  const result: string[] = []
+  let current = ''
+  let inQuote = false
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+
+    if (inQuote) {
+      if (char === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"'
+          i++
+        } else {
+          inQuote = false
+        }
+      } else {
+        current += char
+      }
+    } else {
+      if (char === '"') {
+        inQuote = true
+      } else if (char === ',') {
+        result.push(current)
+        current = ''
+      } else {
+        current += char
+      }
+    }
+  }
+  result.push(current)
+  return result
+}
+
 function parseCSV(content: string): RawTransaction[] {
-  const lines = content.trim().split('\n')
+  const lines = content.trim().split(/\r?\n/)
   if (lines.length < 2) return []
 
-  const headers = lines[0].split(',')
+  const headers = parseCSVLine(lines[0])
   const transactions: RawTransaction[] = []
 
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',')
+    const values = parseCSVLine(lines[i])
     const tx: Record<string, string> = {}
 
     headers.forEach((header, index) => {
