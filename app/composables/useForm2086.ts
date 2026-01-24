@@ -134,6 +134,25 @@ export function useForm2086() {
     }
   }
 
+  function escapeCSVValue(value: string | number | null | undefined): string {
+    if (value === null || value === undefined) return ''
+
+    let stringValue = String(value)
+
+    // Prevent Formula Injection (CSV Injection)
+    // If the field starts with any of the following characters, prepend a single quote
+    if (/^[=\+\-@]/.test(stringValue)) {
+      stringValue = "'" + stringValue
+    }
+
+    // If the field contains quotes, commas, or newlines, wrap it in quotes and escape internal quotes
+    if (/[",\n\r]/.test(stringValue)) {
+      stringValue = `"${stringValue.replace(/"/g, '""')}"`
+    }
+
+    return stringValue
+  }
+
   function downloadCSV(data: Form2086Data) {
     const lines = [
       ['Numéro cession', 'Date', 'Crypto', 'Quantité', '211 - Date', '212 - Prix cession', '213 - Prix acquisition', '214 - Frais acquisition', '215 - Total acquisition', '216 - Frais cession', '217 - Cession nette', '218 - Acquisition totale', '220 - Soulte', '221 - Plus-value brute', '222 - Moins-value', '223 - Plus-value nette'].join(',')
@@ -141,27 +160,27 @@ export function useForm2086() {
 
     data.cessions.forEach(c => {
       lines.push([
-        c.numero,
-        c.date,
-        c.crypto,
-        c.quantite.toFixed(8),
-        c.ligne211,
-        c.ligne212.toFixed(2),
-        c.ligne213.toFixed(2),
-        c.ligne214.toFixed(2),
-        c.ligne215.toFixed(2),
-        c.ligne216.toFixed(2),
-        c.ligne217.toFixed(2),
-        c.ligne218.toFixed(2),
-        c.ligne220.toFixed(2),
-        c.ligne221.toFixed(2),
-        c.ligne222.toFixed(2),
-        c.ligne223.toFixed(2)
+        escapeCSVValue(c.numero),
+        escapeCSVValue(c.date),
+        escapeCSVValue(c.crypto),
+        escapeCSVValue(c.quantite.toFixed(8)),
+        escapeCSVValue(c.ligne211),
+        escapeCSVValue(c.ligne212.toFixed(2)),
+        escapeCSVValue(c.ligne213.toFixed(2)),
+        escapeCSVValue(c.ligne214.toFixed(2)),
+        escapeCSVValue(c.ligne215.toFixed(2)),
+        escapeCSVValue(c.ligne216.toFixed(2)),
+        escapeCSVValue(c.ligne217.toFixed(2)),
+        escapeCSVValue(c.ligne218.toFixed(2)),
+        escapeCSVValue(c.ligne220.toFixed(2)),
+        escapeCSVValue(c.ligne221.toFixed(2)),
+        escapeCSVValue(c.ligne222.toFixed(2)),
+        escapeCSVValue(c.ligne223.toFixed(2))
       ].join(','))
     })
 
     lines.push(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''].join(','))
-    lines.push(['', '', '', '', '', '', '', '', '', '', '', '', 'TOTAL', data.ligne3VK.toFixed(2), data.ligne3VL.toFixed(2)].join(','))
+    lines.push(['', '', '', '', '', '', '', '', '', '', '', '', 'TOTAL', escapeCSVValue(data.ligne3VK.toFixed(2)), escapeCSVValue(data.ligne3VL.toFixed(2))].join(','))
 
     const csv = lines.join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
